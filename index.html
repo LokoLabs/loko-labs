@@ -10,7 +10,7 @@
     :root {
       --black:    #0A0A0A;
       --white:    #F0EDE6;
-      --accent:   #E8511A;
+      --accent:   #E8490F;
       --steel:    #1C1C1C;
       --mid:      #2E2E2E;
       --muted:    #6B6B6B;
@@ -43,7 +43,7 @@
     }
     .cursor-ring {
       width: 36px; height: 36px;
-      border: 1px solid rgba(232,81,26,0.5);
+      border: 1px solid rgba(232,73,15,0.5);
       border-radius: 50%;
       position: fixed; top: 0; left: 0;
       pointer-events: none;
@@ -384,7 +384,7 @@
       font-weight: 800;
       font-size: clamp(160px, 22vw, 360px);
       color: transparent;
-      -webkit-text-stroke: 1px rgba(232,81,26,0.08);
+      -webkit-text-stroke: 1px rgba(232,73,15,0.08);
       pointer-events: none;
       line-height: 1;
     }
@@ -611,6 +611,12 @@
     }
 
     /* ── Responsive ── */
+    /* Écrans tactiles / sans souris : pas de curseur custom */
+    @media (hover: none), (pointer: coarse) {
+      body, .nl-btn { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+
     @media (max-width: 768px) {
       .hero-meta { flex-direction: column; gap: 32px; }
       .hero-stat { text-align: left; }
@@ -696,6 +702,7 @@
 
     <!-- ARTICLES -->
     <section id="articles">
+      <div class="section-label">// 02 · Articles</div>
       <div class="articles-header">
         <h2 class="section-title">Derniers<br />Articles</h2>
         <a href="https://lokolabs.hashnode.dev" target="_blank" rel="noopener" class="view-all">Tout voir →</a>
@@ -759,8 +766,8 @@
     <a href="#" class="footer-logo">Loko<span>Labs</span></a>
     <p class="footer-copy">© 2026 Loko Labs · Solide comme un Loko</p>
     <ul class="footer-links">
-      <li><a href="https://lokolabs.hashnode.dev/">Hashnode</a></li>
-      <li><a href="https://github.com/Yann2808/lokolabs">GitHub</a></li>
+      <li><a href="https://lokolabs.hashnode.dev/" target="_blank" rel="noopener">Hashnode</a></li>
+      <li><a href="https://github.com/LokoLabs" target="_blank" rel="noopener">GitHub</a></li>
       <!--
         <li><a href="#">LinkedIn</a></li>
         <li><a href="#">Twitter/X</a></li>
@@ -802,18 +809,25 @@
     const HASHNODE_URL  = 'https://gql.hashnode.com/';
 
     // Détermine le badge à afficher selon les tags de l'article
+    // (comparaison sur des mots entiers : "go" ne doit pas matcher "google" ni "ci" "data-science")
     function getBadge(tags) {
       if (!tags || tags.length === 0) return { label: 'Article', cls: 'badge-ops' };
-      const names = tags.map(t => (t.name || t.slug || '').toLowerCase());
-      if (names.some(n => n.includes('benchmark') || n.includes('crash') || n.includes('test') || n.includes('comparison') || n.includes('vs')))
+      const words = new Set(tags.flatMap(t => [t.name, t.slug]
+        .filter(Boolean)
+        .flatMap(v => v.toLowerCase().split(/[^a-z0-9.]+/))));
+      const has = list => list.some(w => words.has(w));
+      if (has(['benchmark', 'benchmarking', 'crash', 'comparison', 'vs']))
         return { label: 'Crash Test', cls: 'badge-hype' };
-      if (names.some(n => n.includes('dataops') || n.includes('devops') || n.includes('terraform') || n.includes('ci') || n.includes('cd') || n.includes('dbt')))
+      if (has(['dataops', 'devops', 'terraform', 'ci', 'cd', 'cicd', 'dbt', 'github-actions', 'actions']))
         return { label: 'DataOps', cls: 'badge-ops' };
-      if (names.some(n => n.includes('production') || n.includes('prod') || n.includes('ready')))
-        return { label: 'Production Ready ✓', cls: 'badge-ready' };
-      if (names.some(n => n.includes('python') || n.includes('rust') || n.includes('go') || n.includes('code')))
+      if (has(['python', 'rust', 'go', 'golang']))
         return { label: 'Engineering', cls: 'badge-ops' };
       return { label: tags[0].name || 'Article', cls: 'badge-ops' };
+    }
+
+    // Échappe le texte venant de l'API avant injection dans le HTML
+    function esc(str) {
+      return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
     function formatDate(dateStr) {
@@ -845,15 +859,15 @@
         const tagLabel = post.tags && post.tags[0] ? post.tags[0].name : 'Article';
 
         return `
-        <a href="${url}" target="_blank" rel="noopener" class="article-card">
+        <a href="${esc(url)}" target="_blank" rel="noopener" class="article-card">
           <span class="article-num">${num}</span>
           <div class="article-info">
-            <h3>${post.title}</h3>
-            ${brief ? `<p>${brief}</p>` : ''}
+            <h3>${esc(post.title)}</h3>
+            ${brief ? `<p>${esc(brief)}</p>` : ''}
           </div>
           <div class="article-meta">
             <span class="article-badge ${badge.cls}">${badge.label}</span>
-            <span class="article-date">${tagLabel} · ${date}</span>
+            <span class="article-date">${esc(tagLabel)} · ${date}</span>
           </div>
         </a>`;
       }).join('');
