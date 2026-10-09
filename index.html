@@ -875,7 +875,7 @@
       try {
         const res = await fetch('/api/posts');
         const json = await res.json();
-        if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+        if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
         renderArticles(json.posts || []);
       } catch (err) {
         console.warn('Articles indisponibles :', err);

@@ -32,8 +32,8 @@ export async function onRequestGet() {
       headers: { 'User-Agent': 'loko-labs-landing/1.0' },
       cf: { cacheTtl: 3600, cacheEverything: true },
     });
-    if (!res.ok) throw new Error(`RSS HTTP ${res.status}`);
     const xml = await res.text();
+    if (!res.ok) throw new Error(`RSS HTTP ${res.status} : ${xml.slice(0, 200)}`);
 
     const items = xml.match(/<item>[\s\S]*?<\/item>/g) || [];
     const posts = items.slice(0, MAX_POSTS).map(item => {
@@ -52,6 +52,8 @@ export async function onRequestGet() {
       headers: { 'Cache-Control': 'public, max-age=3600' },
     });
   } catch (err) {
-    return Response.json({ posts: [], error: String(err.message || err) }, { status: 502 });
+    return Response.json({ posts: [], error: String(err.message || err) }, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   }
 }
