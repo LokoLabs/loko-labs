@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Ma stack data locale en 2026",
+    "url": "https://lokolabs.hashnode.dev/",
+    "publishedAt": "",
+    "brief": "DuckDB, dbt-core, Prefect, Docker : pourquoi ces quatre outils, ce qu'ils font bien, et où ils montrent leurs limites.",
+    "tags": [{ "name": "Data Engineering" }, { "name": "Python" }]
+  },
+  {
+    "title": "dbt + DuckDB : monte ton entrepôt local de zéro",
+    "url": "https://lokolabs.hashnode.dev/",
+    "publishedAt": "",
+    "brief": "415 000 lignes Olist, des modèles staging et un mart, des tests, et zéro cloud. Avec le piège Python 3.14 en prime.",
+    "tags": [{ "name": "dbt" }, { "name": "DuckDB" }]
+  },
+  {
+    "title": "DuckDB vs Pandas : Crash Test sur 54 millions de lignes",
+    "url": "https://lokolabs.hashnode.dev/",
+    "publishedAt": "",
+    "brief": "Jusqu'à 194× plus rapide au chargement. Mais les deux outils finissent par céder : voici où, et pourquoi.",
+    "tags": [{ "name": "Benchmark" }, { "name": "DuckDB" }]
+  },
+  {
+    "title": "Pourquoi j'ai choisi un fichier HTML plutôt que Next.js pour ma landing page",
+    "url": "https://lokolabs.hashnode.dev/html-vs-nextjs-landing-page-ingenieur-data",
+    "publishedAt": "",
+    "brief": "Un arbitrage d'ingénieur sur la complexité : quand le framework coûte plus qu'il ne rapporte.",
+    "tags": [{ "name": "Architecture" }]
+  }
+]
