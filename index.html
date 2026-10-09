@@ -863,20 +863,21 @@
           </div>
           <div class="article-meta">
             <span class="article-badge ${badge.cls}">${badge.label}</span>
-            <span class="article-date">${esc(tagLabel)} · ${date}</span>
+            <span class="article-date">${esc(tagLabel)}${date ? ' · ' + date : ''}</span>
           </div>
         </a>`;
       }).join('');
     }
 
-    // Les articles viennent du flux RSS du blog, lu par la Pages Function
-    // functions/api/posts.js (l'API GraphQL Hashnode est réservée au plan Pro).
+    // Les articles sont listés dans articles.json, à la racine du repo.
+    // (L'API GraphQL Hashnode est réservée au plan Pro depuis juin 2026,
+    // et le flux RSS est bloqué par la protection anti-bot du blog.)
+    // Nouvel article → ajouter une entrée en tête du fichier, puis push.
     async function fetchPosts() {
       try {
-        const res = await fetch('/api/posts');
-        const json = await res.json();
-        if (!res.ok || json.error) throw new Error(json.error || `HTTP ${res.status}`);
-        renderArticles(json.posts || []);
+        const res = await fetch('/articles.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        renderArticles(await res.json());
       } catch (err) {
         console.warn('Articles indisponibles :', err);
         renderArticles([]);
